@@ -1,5 +1,4 @@
 from ..source import InputCoordinateSystem
-from .TestingUtilities import assert_actual_equals_expected, assert_true, assert_false
 
 def create_one_through_nine_coordinate_system():
     return InputCoordinateSystem.SimpleNumericCoordinateSystem(1, 9)
@@ -55,4 +54,3 @@ class TestInputCoordinateSystem(unittest.TestCase):
             ("1", "2 c")
         )
         
-unittest.main(exit=False, module=__name__)
