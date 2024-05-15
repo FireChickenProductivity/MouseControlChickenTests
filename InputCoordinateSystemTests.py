@@ -163,10 +163,18 @@ class InfiniteSequenceCoordinateSystemTests(unittest.TestCase):
     def test_infinite_sequence_coordinate_system_do_coordinates_belong_to_system(self):
         coordinate_system = create_simple_infinite_sequence_alphabetic_coordinate_system()
         assert_system_handles_primary_coordinates_and_extreme_numeric_values(self, coordinate_system)
+        for first_coordinate in coordinate_system.get_primary_coordinates():
+            for second_coordinate in coordinate_system.get_primary_coordinates():
+                self.assertTrue(coordinate_system.do_coordinates_belong_to_system(first_coordinate + " " + second_coordinate))
+            self.assertFalse(coordinate_system.do_coordinates_belong_to_system(first_coordinate + " " + "90"))
 
     def test_infinite_sequence_coordinate_system_do_coordinates_start_belong_to_system(self):
         coordinate_system = create_simple_infinite_sequence_alphabetic_coordinate_system()
         assert_coordinates_not_including_extreme_values_handle_do_coordinates_start_belong_to_system(self, coordinate_system)
+        for first_coordinate in coordinate_system.get_primary_coordinates():
+            for second_coordinate in coordinate_system.get_primary_coordinates():
+                for value in ["90", "a9 20"]:
+                    self.assertTrue(coordinate_system.do_coordinates_start_belong_to_system(first_coordinate + " " + second_coordinate + " " + value))
             
     def test_infinite_sequence_coordinate_system_split_coordinates_with_head_belonging_to_one_system_and_tail_belonging_to_another(self):
         coordinate_system = create_simple_infinite_sequence_alphabetic_coordinate_system()
