@@ -53,4 +53,45 @@ class TestInputCoordinateSystem(unittest.TestCase):
             coordinate_system.split_coordinates_with_head_belonging_to_system_and_tail_belonging_to_another_system("1 2 c"),
             ("1", "2 c")
         )
-        
+
+def create_simple_list_coordinate_system():
+    coordinate_list = ["1", "2"]
+    return InputCoordinateSystem.ListCoordinateSystem(coordinate_list)
+
+class ListCoordinateSystem(unittest.TestCase):
+    def test_list_coordinate_system_primary_coordinates(self):
+        coordinate_system = create_simple_list_coordinate_system()
+        first_expected = ["1", "2"]
+        second_expected = ["2", "1"]
+        actual = return_unraveled_generator(coordinate_system.get_primary_coordinates())
+        self.assertTrue(actual == first_expected or actual == second_expected)
+    
+    def test_list_coordinate_system_do_coordinates_belong_to_system(self):
+        coordinate_system = create_simple_list_coordinate_system()
+        for coordinate in coordinate_system.get_primary_coordinates():
+            self.assertTrue(coordinate_system.do_coordinates_belong_to_system(coordinate))
+        for value in range(10, 15):
+            self.assertFalse(coordinate_system.do_coordinates_belong_to_system(str(value)))
+
+    def test_list_coordinate_system_do_coordinates_start_belong_to_system(self):
+        coordinate_system = create_simple_list_coordinate_system()
+        endings = ["0", "10", "-1", "-10", "a", "b", "c k", "d", "e", "f", "g", "h", "i", "j", "1"]
+        for coordinate in coordinate_system.get_primary_coordinates():
+            for ending in endings:
+                self.assertTrue(coordinate_system.do_coordinates_start_belong_to_system(coordinate + " " + ending))
+        for value in range(10, 15):
+            for ending in endings:
+                self.assertFalse(coordinate_system.do_coordinates_start_belong_to_system(str(value) + " " + ending))
+            
+    def test_list_coordinate_system_split_coordinates_with_head_belonging_to_one_system_and_tail_belonging_to_another(self):
+        coordinate_system = create_simple_list_coordinate_system()
+        for coordinate in coordinate_system.get_primary_coordinates():
+            for value in range(0, 20):
+                self.assertEqual(
+                    coordinate_system.split_coordinates_with_head_belonging_to_system_and_tail_belonging_to_another_system(coordinate + " " + str(value)),
+                    (coordinate, str(value))
+                )
+        self.assertEqual(
+            coordinate_system.split_coordinates_with_head_belonging_to_system_and_tail_belonging_to_another_system("1 2 c"),
+            ("1", "2 c")
+        )
