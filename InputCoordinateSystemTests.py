@@ -150,3 +150,24 @@ class DisjointUnionCoordinateSystemTests(unittest.TestCase):
         coordinate_system = InputCoordinateSystem.DisjointUnionCoordinateSystem([create_one_through_nine_coordinate_system(), simple_alphabetical_list_input_coordinate_system()])
         assert_coordinate_system_split_works(self, coordinate_system)
     
+def create_simple_infinite_sequence_alphabetic_coordinate_system():
+    return InputCoordinateSystem.InfiniteSequenceCoordinateSystem(simple_alphabetical_list_input_coordinate_system())
+
+class InfiniteSequenceCoordinateSystemTests(unittest.TestCase):
+    def test_infinite_sequence_coordinate_system_primary_coordinates(self):
+        coordinate_system = create_simple_infinite_sequence_alphabetic_coordinate_system()
+        expected = ["a", "b"]
+        actual = return_unraveled_generator(coordinate_system.get_primary_coordinates())
+        assert_lists_have_same_elements_and_size(self, expected, actual)
+
+    def test_infinite_sequence_coordinate_system_do_coordinates_belong_to_system(self):
+        coordinate_system = create_simple_infinite_sequence_alphabetic_coordinate_system()
+        assert_system_handles_primary_coordinates_and_extreme_numeric_values(self, coordinate_system)
+
+    def test_infinite_sequence_coordinate_system_do_coordinates_start_belong_to_system(self):
+        coordinate_system = create_simple_infinite_sequence_alphabetic_coordinate_system()
+        assert_coordinates_not_including_extreme_values_handle_do_coordinates_start_belong_to_system(self, coordinate_system)
+            
+    def test_infinite_sequence_coordinate_system_split_coordinates_with_head_belonging_to_one_system_and_tail_belonging_to_another(self):
+        coordinate_system = create_simple_infinite_sequence_alphabetic_coordinate_system()
+        assert_coordinate_system_split_works(self, coordinate_system)
