@@ -179,3 +179,11 @@ class InfiniteSequenceCoordinateSystemTests(unittest.TestCase):
     def test_infinite_sequence_coordinate_system_split_coordinates_with_head_belonging_to_one_system_and_tail_belonging_to_another(self):
         coordinate_system = create_simple_infinite_sequence_alphabetic_coordinate_system()
         assert_coordinate_system_split_works(self, coordinate_system)
+        for coordinate in coordinate_system.get_primary_coordinates():
+            for another_coordinate in coordinate_system.get_primary_coordinates():
+                for value in ["30", "a9 20"]:
+                    self.assertEqual(
+                        coordinate_system.split_coordinates_with_head_belonging_to_system_and_tail_belonging_to_another_system(coordinate + " " + another_coordinate + " " + value),
+                        (coordinate + " " + another_coordinate, value)
+                    )
+        
