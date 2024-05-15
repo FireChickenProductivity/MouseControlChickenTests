@@ -147,3 +147,43 @@ class SequentialCombinationCoordinateSystemTests(unittest.TestCase):
             coordinate_system.split_coordinates_with_head_belonging_to_system_and_tail_belonging_to_another_system("1 1 2 c"),
             ("1 1", "2 c")
         )
+    
+def simple_alphabetical_list_input_coordinate_system():
+    return InputCoordinateSystem.ListCoordinateSystem(["a", "b"])
+
+class DisjointUnionCoordinateSystemTests(unittest.TestCase):
+    def test_disjoint_union_coordinate_system_primary_coordinates(self):
+        coordinate_system = InputCoordinateSystem.DisjointUnionCoordinateSystem([create_one_through_nine_coordinate_system(), simple_alphabetical_list_input_coordinate_system()])
+        expected = create_valid_one_through_nine_primary_coordinates() + ["a", "b"]
+        actual = return_unraveled_generator(coordinate_system.get_primary_coordinates())
+        assert_lists_have_same_elements_and_size(self, expected, actual)
+
+    def test_disjoint_union_coordinate_system_do_coordinates_belong_to_system(self):
+        coordinate_system = InputCoordinateSystem.DisjointUnionCoordinateSystem([create_one_through_nine_coordinate_system(), simple_alphabetical_list_input_coordinate_system()])
+        for coordinate in coordinate_system.get_primary_coordinates():
+            self.assertTrue(coordinate_system.do_coordinates_belong_to_system(coordinate))
+        for value in range(10, 15):
+            self.assertFalse(coordinate_system.do_coordinates_belong_to_system(str(value)))
+
+    def test_disjoint_union_coordinate_system_do_coordinates_start_belong_to_system(self):
+        coordinate_system = InputCoordinateSystem.DisjointUnionCoordinateSystem([create_one_through_nine_coordinate_system(), simple_alphabetical_list_input_coordinate_system()])
+        endings = ["0", "10", "-1", "-10", "a", "b", "c k", "d", "e", "f", "g", "h", "i", "j", "1"]
+        for coordinate in coordinate_system.get_primary_coordinates():
+            for ending in endings:
+                self.assertTrue(coordinate_system.do_coordinates_start_belong_to_system(coordinate + " " + ending))
+        for value in range(10, 15):
+            for ending in endings:
+                self.assertFalse(coordinate_system.do_coordinates_start_belong_to_system(str(value) + " " + ending))
+            
+    def test_disjoint_union_coordinate_system_split_coordinates_with_head_belonging_to_one_system_and_tail_belonging_to_another(self):
+        coordinate_system = InputCoordinateSystem.DisjointUnionCoordinateSystem([create_one_through_nine_coordinate_system(), simple_alphabetical_list_input_coordinate_system()])
+        for coordinate in coordinate_system.get_primary_coordinates():
+            for value in range(0, 20):
+                self.assertEqual(
+                    coordinate_system.split_coordinates_with_head_belonging_to_system_and_tail_belonging_to_another_system(coordinate + " " + str(value)),
+                    (coordinate, str(value))
+                )
+        self.assertEqual(
+            coordinate_system.split_coordinates_with_head_belonging_to_system_and_tail_belonging_to_another_system("1 2 c"),
+            ("1", "2 c")
+        )
