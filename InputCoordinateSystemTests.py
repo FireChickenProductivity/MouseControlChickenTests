@@ -37,6 +37,19 @@ def assert_coordinates_not_including_extreme_values_handle_do_coordinates_start_
         for valid_coordinates in coordinate_system.get_primary_coordinates():
             testing_class.assertFalse(coordinate_system.do_coordinates_start_belong_to_system(str(value) + " " + valid_coordinates))
 
+def assert_coordinate_system_split_works(testing_class: unittest.TestCase, coordinate_system: InputCoordinateSystem.InputCoordinateSystem):
+    for coordinate in coordinate_system.get_primary_coordinates():
+        for value in ["30", "a9 20"]:
+            testing_class.assertEqual(
+                coordinate_system.split_coordinates_with_head_belonging_to_system_and_tail_belonging_to_another_system(coordinate + " " + value),
+                (coordinate, value)
+            )
+    value_belonging_to_another_system = "valuenotinanysystem"
+    testing_class.assertEqual(
+        coordinate_system.split_coordinates_with_head_belonging_to_system_and_tail_belonging_to_another_system(value_belonging_to_another_system),
+        ("", value_belonging_to_another_system)
+    )
+
 class TestInputCoordinateSystemTests(unittest.TestCase):
     def test_simple_numeric_coordinate_system_primary_coordinates(self):
         coordinate_system = create_one_through_nine_coordinate_system()
@@ -53,19 +66,7 @@ class TestInputCoordinateSystemTests(unittest.TestCase):
         assert_coordinates_not_including_extreme_values_handle_do_coordinates_start_belong_to_system(self, coordinate_system)
             
     def test_simple_coordinates_system_split_coordinates_with_head_belonging_to_one_system_and_tail_belonging_to_another(self):
-        primary_coordinates = create_valid_one_through_nine_primary_coordinates()
-        coordinate_system = create_one_through_nine_coordinate_system()
-        for valid_coordinate in primary_coordinates:
-            for value in range(0, 20):
-                self.assertEqual(
-                coordinate_system.split_coordinates_with_head_belonging_to_system_and_tail_belonging_to_another_system(valid_coordinate + " " + str(value)),
-                (valid_coordinate, str(value))
-                )
-        
-        self.assertEqual(
-            coordinate_system.split_coordinates_with_head_belonging_to_system_and_tail_belonging_to_another_system("1 2 c"),
-            ("1", "2 c")
-        )
+        assert_coordinate_system_split_works(self, create_one_through_nine_coordinate_system())
 
 def create_simple_list_coordinate_system():
     coordinate_list = ["1", "2"]
@@ -89,16 +90,7 @@ class ListCoordinateSystemTests(unittest.TestCase):
             
     def test_list_coordinate_system_split_coordinates_with_head_belonging_to_one_system_and_tail_belonging_to_another(self):
         coordinate_system = create_simple_list_coordinate_system()
-        for coordinate in coordinate_system.get_primary_coordinates():
-            for value in range(0, 20):
-                self.assertEqual(
-                    coordinate_system.split_coordinates_with_head_belonging_to_system_and_tail_belonging_to_another_system(coordinate + " " + str(value)),
-                    (coordinate, str(value))
-                )
-        self.assertEqual(
-            coordinate_system.split_coordinates_with_head_belonging_to_system_and_tail_belonging_to_another_system("1 2 c"),
-            ("1", "2 c")
-        )
+        assert_coordinate_system_split_works(self, coordinate_system)
 
 def create_simple_sequential_combination_coordinate_system():
     one_through_nine_system = create_one_through_nine_coordinate_system()
@@ -134,16 +126,7 @@ class SequentialCombinationCoordinateSystemTests(unittest.TestCase):
             
     def test_sequential_combination_coordinate_system_split_coordinates_with_head_belonging_to_one_system_and_tail_belonging_to_another(self):
         coordinate_system = create_simple_sequential_combination_coordinate_system()
-        for coordinate in coordinate_system.get_primary_coordinates():
-            for value in range(0, 20):
-                self.assertEqual(
-                    coordinate_system.split_coordinates_with_head_belonging_to_system_and_tail_belonging_to_another_system(coordinate + " " + str(value)),
-                    (coordinate, str(value))
-                )
-        self.assertEqual(
-            coordinate_system.split_coordinates_with_head_belonging_to_system_and_tail_belonging_to_another_system("1 1 2 c"),
-            ("1 1", "2 c")
-        )
+        assert_coordinate_system_split_works(self, coordinate_system)
     
 def simple_alphabetical_list_input_coordinate_system():
     return InputCoordinateSystem.ListCoordinateSystem(["a", "b"])
@@ -165,13 +148,5 @@ class DisjointUnionCoordinateSystemTests(unittest.TestCase):
             
     def test_disjoint_union_coordinate_system_split_coordinates_with_head_belonging_to_one_system_and_tail_belonging_to_another(self):
         coordinate_system = InputCoordinateSystem.DisjointUnionCoordinateSystem([create_one_through_nine_coordinate_system(), simple_alphabetical_list_input_coordinate_system()])
-        for coordinate in coordinate_system.get_primary_coordinates():
-            for value in range(0, 20):
-                self.assertEqual(
-                    coordinate_system.split_coordinates_with_head_belonging_to_system_and_tail_belonging_to_another_system(coordinate + " " + str(value)),
-                    (coordinate, str(value))
-                )
-        self.assertEqual(
-            coordinate_system.split_coordinates_with_head_belonging_to_system_and_tail_belonging_to_another_system("1 2 c"),
-            ("1", "2 c")
-        )
+        assert_coordinate_system_split_works(self, coordinate_system)
+    
