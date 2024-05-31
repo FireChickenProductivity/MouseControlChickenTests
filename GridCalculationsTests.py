@@ -1,6 +1,7 @@
 from ..source.grid.GridCalculations import compute_grid_tree
 from ..source.grid.Grid import Grid, RecursivelyDivisibleGridCombination
-from ..source.grid.ReverseCoordinateDoublingGrid import ReverseCoordinateDoublingGrid
+from ..source.grid.ReverseCoordinateDoublingGrid import ReverseCoordinateHorizontalDoublingGrid
+from ..source.grid.RecursiveDivisionGrid import RectangularRecursiveDivisionGrid
 from ..source.GridFactory import SquareRecursiveDivisionGridFactory
 
 import unittest
@@ -23,3 +24,16 @@ class ComputeGridTreeTests(unittest.TestCase):
         child = tree.get_children()[0]
         self.assertFalse(child.has_children())
         self.assertEqual(child.get_value(), secondary_simple_grid)
+    
+    def test_simple_doubling_gives_both_grids(self):
+        simple_grid = SquareRecursiveDivisionGridFactory().create_grid("2")
+        doubling = ReverseCoordinateHorizontalDoublingGrid(simple_grid)
+        tree = compute_grid_tree(doubling)
+        self.assertTrue(tree.has_children())
+        self.assertTrue(len(tree.get_children()) == 2)
+        self.assertEqual(tree.get_value(), doubling)
+        for child in tree.get_children():
+            self.assertFalse(child.has_children())
+            value_type = type(child.get_value())
+            self.assertEqual(value_type, RectangularRecursiveDivisionGrid)
+
