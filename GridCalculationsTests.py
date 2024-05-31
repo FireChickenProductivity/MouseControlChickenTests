@@ -21,6 +21,28 @@ def assert_combination_of_combinations_matches_expected(testing_class, tree, sim
     testing_class.assertFalse(tree.has_children())
     testing_class.assertEqual(tree.get_value(), simple_grids[-1])
 
+def is_every_element_from_first_list_in_second(first_list, second_list):
+    for element in first_list:
+        if element not in second_list:
+            return False
+    return True
+
+def do_coordinate_systems_match(first_grid: Grid, second_grid: Grid):
+    first_coordinates = [coordinate for coordinate in first_grid.get_coordinate_system().get_primary_coordinates()]
+    second_coordinates = [coordinate for coordinate in second_grid.get_coordinate_system().get_primary_coordinates()]
+    return len(first_coordinates) == len(second_coordinates) and is_every_element_from_first_list_in_second(first_coordinates, second_coordinates)
+
+def compute_grids_for_simple_grid_with_primary_and_secondary(grid):
+    return grid, grid.get_primary_grid(), grid.get_secondary_grid()
+
+def do_grids_with_simple_primary_and_secondary_match_coordinate_systems(first_grid, second_grid):
+    first_grids = compute_grids_for_simple_grid_with_primary_and_secondary(first_grid)
+    second_grids = compute_grids_for_simple_grid_with_primary_and_secondary(second_grid)
+    for i in range(3):
+        if not do_coordinate_systems_match(first_grids[i], second_grids[i]):
+            return False
+    return True
+
 def compute_simple_combination_types(combination):
     main_type = type(combination)
     primary_type = type(combination.get_primary_grid())
@@ -30,7 +52,7 @@ def compute_simple_combination_types(combination):
 def simple_combination_matches(actual, expected):
     expected_types = compute_simple_combination_types(expected)
     actual_types = compute_simple_combination_types(actual)
-    return expected_types == actual_types
+    return expected_types == actual_types and do_grids_with_simple_primary_and_secondary_match_coordinate_systems(actual, expected)
 
 def compute_simple_doubling_types(doubling):
     main_type = type(doubling)
@@ -41,7 +63,7 @@ def compute_simple_doubling_types(doubling):
 def simple_doubling_matches(actual, expected):
     expected_types = compute_simple_doubling_types(expected)
     actual_types = compute_simple_doubling_types(actual)
-    return expected_types == actual_types
+    return expected_types == actual_types and do_grids_with_simple_primary_and_secondary_match_coordinate_systems(actual, expected)
 
 class ComputeGridTreeTests(unittest.TestCase):
     def test_simple_grid_gives_grid(self):
@@ -121,7 +143,7 @@ class ComputeGridTreeTests(unittest.TestCase):
         self.assertEqual(primary_secondary_doubling_primary_child.get_value(), simple_grids[1])
         primary_secondary_doubling_secondary_child = primary_instance_of_secondary_doubling_node.get_children()[1]
         self.assertEqual(primary_secondary_doubling_secondary_child.get_value(), doublings[1].get_secondary_grid())
-        secondary_secondary_doubling_grid = secondary_instance_of_secondary_doubling_node.get_children()[0].get_value()
+        secondary_secondary_doubling_grid = secondary_instance_of_secondary_doubling_node.get_value()
         self.assertTrue(simple_doubling_matches(secondary_secondary_doubling_grid, doublings[1]))
     
         
