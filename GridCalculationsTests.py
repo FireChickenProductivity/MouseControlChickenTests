@@ -21,6 +21,28 @@ def assert_combination_of_combinations_matches_expected(testing_class, tree, sim
     testing_class.assertFalse(tree.has_children())
     testing_class.assertEqual(tree.get_value(), simple_grids[-1])
 
+def compute_simple_combination_types(combination):
+    main_type = type(combination)
+    primary_type = type(combination.get_primary_grid())
+    secondary_type = type(combination.get_secondary_grid())
+    return main_type, primary_type, secondary_type
+
+def simple_combination_matches(actual, expected):
+    expected_types = compute_simple_combination_types(expected)
+    actual_types = compute_simple_combination_types(actual)
+    return expected_types == actual_types
+
+def compute_simple_doubling_types(doubling):
+    main_type = type(doubling)
+    primary_type = type(doubling.get_primary_grid())
+    secondary_type = type(doubling.get_secondary_grid())
+    return main_type, primary_type, secondary_type
+
+def simple_doubling_matches(actual, expected):
+    expected_types = compute_simple_doubling_types(expected)
+    actual_types = compute_simple_doubling_types(actual)
+    return expected_types == actual_types
+
 class ComputeGridTreeTests(unittest.TestCase):
     def test_simple_grid_gives_grid(self):
         factory = SquareRecursiveDivisionGridFactory()
@@ -72,3 +94,35 @@ class ComputeGridTreeTests(unittest.TestCase):
         secondary_child = tree.get_children()[1]
         assert_combination_of_combinations_matches_expected(self, secondary_child, secondary_simple_grids)
         
+    def test_combination_of_doublings_gives_all_grids(self):
+        simple_grids = [SquareRecursiveDivisionGridFactory().create_grid(str(i)) for i in range(2, 4)]
+        doublings = [ReverseCoordinateHorizontalDoublingGrid(grid) for grid in simple_grids]
+        combination = RecursivelyDivisibleGridCombination(doublings[0], doublings[1])
+        tree = compute_grid_tree(combination)
+        self.assertEqual(len(tree.get_children()), 2)
+        for child in tree.get_children():
+            self.assertEqual(len(child.get_children()), 1)
+            for grandchild in child.get_children():
+                self.assertEqual(len(grandchild.get_children()), 2)
+                for great_grandchild in grandchild.get_children():
+                    self.assertEqual(len(great_grandchild.get_children()), 0)
+        self.assertEqual(tree.get_value(), doublings[0])
+        primary_child = tree.get_children()[0]
+        self.assertEqual(primary_child.get_value(), simple_grids[0])
+        secondary_child = tree.get_children()[1]
+        self.assertEqual(secondary_child.get_value(), doublings[0].get_secondary_grid())
+        primary_instance_of_secondary_doubling_node = primary_child.get_children()[0]
+        primary_instance_of_secondary_doubling = primary_instance_of_secondary_doubling_node.get_value()
+        self.assertEqual(primary_instance_of_secondary_doubling, doublings[1])
+        secondary_instance_of_secondary_doubling_node = secondary_child.get_children()[0]
+        secondary_instance_of_secondary_doubling = secondary_instance_of_secondary_doubling_node.get_value()
+        self.assertTrue(simple_combination_matches(secondary_instance_of_secondary_doubling, doublings[1]))
+        primary_secondary_doubling_primary_child = primary_instance_of_secondary_doubling_node.get_children()[0]
+        self.assertEqual(primary_secondary_doubling_primary_child.get_value(), simple_grids[1])
+        primary_secondary_doubling_secondary_child = primary_instance_of_secondary_doubling_node.get_children()[1]
+        self.assertEqual(primary_secondary_doubling_secondary_child.get_value(), doublings[1].get_secondary_grid())
+        secondary_secondary_doubling_grid = secondary_instance_of_secondary_doubling_node.get_children()[0].get_value()
+        self.assertTrue(simple_doubling_matches(secondary_secondary_doubling_grid, doublings[1]))
+    
+        
+
