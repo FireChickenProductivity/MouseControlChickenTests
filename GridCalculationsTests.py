@@ -37,3 +37,16 @@ class ComputeGridTreeTests(unittest.TestCase):
             value_type = type(child.get_value())
             self.assertEqual(value_type, RectangularRecursiveDivisionGrid)
 
+    def test_combination_of_combinations_gives_all_grids(self):
+        simple_grids = [SquareRecursiveDivisionGridFactory().create_grid(str(i)) for i in range(2, 6)]
+        primary_combination = RecursivelyDivisibleGridCombination(simple_grids[0], simple_grids[1])
+        secondary_combination = RecursivelyDivisibleGridCombination(simple_grids[2], simple_grids[3])
+        combination = RecursivelyDivisibleGridCombination(primary_combination, secondary_combination)
+        tree = compute_grid_tree(combination)
+        for i in range(3):
+            self.assertTrue(tree.has_children())
+            self.assertTrue(len(tree.get_children()) == 1)
+            self.assertEqual(tree.get_value(), simple_grids[i])
+            tree = tree.get_children()[0]
+        self.assertFalse(tree.has_children())
+        self.assertEqual(tree.get_value(), simple_grids[-1])
