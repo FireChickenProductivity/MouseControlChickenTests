@@ -8,7 +8,7 @@ import unittest
 
 def compute_rectangular_display_options():
     rectangular_display_types = [RectangularGridFrameDisplay, RectangularCheckerDisplay, RectangularDiagonalDisplay, RectangularPositionDisplay, DoubleRectangularDiagonalDisplay, 
-                               QuadrupleRectangularDiagonalDisplay, DoubleFrameDisplay, QuadrupleFrameDisplay, EmptyDisplay, UniversalPositionDisplay]
+                               QuadrupleRectangularDiagonalDisplay, DoubleFrameDisplay, QuadrupleFrameDisplay, EmptyDisplay, UniversalPositionDisplay, ProximityFrameDisplay]
     rectangular_display_options = [DisplayOption(display_type) for display_type in rectangular_display_types]
     return DisplayOptions(rectangular_display_options)
 
