@@ -1,8 +1,9 @@
-from ..source.grid.GridCalculations import compute_grid_tree
+from ..source.grid.GridCalculations import compute_grid_tree, is_rectangular_grid
 from ..source.grid.Grid import Grid, RecursivelyDivisibleGridCombination
 from ..source.grid.ReverseCoordinateDoublingGrid import ReverseCoordinateHorizontalDoublingGrid
 from ..source.grid.RecursiveDivisionGrid import RectangularRecursiveDivisionGrid
 from ..source.grid_creation.GridFactory import SquareRecursiveDivisionGridFactory
+from ..source.grid.RectangularGrid import ListBasedGrid
 
 import unittest
 
@@ -146,5 +147,36 @@ class ComputeGridTreeTests(unittest.TestCase):
         secondary_secondary_doubling_grid = secondary_instance_of_secondary_doubling_node.get_value()
         self.assertTrue(simple_doubling_matches(secondary_secondary_doubling_grid, doublings[1]))
     
-        
+def create_rectangular_grid():
+    return ListBasedGrid(["0", "1"], ["0", "1"])
 
+def create_non_rectangular_grid():
+    return SquareRecursiveDivisionGridFactory().create_grid("2")
+
+class IsRectangularGridTests(unittest.TestCase):
+    def test_handles_simple_case(self):
+        grid = create_rectangular_grid()
+        self.assertTrue(is_rectangular_grid(grid))
+
+    def test_handles_combination_with_rectangular_grid(self):
+        simple_grid = create_rectangular_grid()
+        combination = RecursivelyDivisibleGridCombination(simple_grid, simple_grid)
+        self.assertTrue(is_rectangular_grid(combination))
+
+        non_rectangular_grid = create_non_rectangular_grid()
+        rectangular_first_combination = RecursivelyDivisibleGridCombination(simple_grid, non_rectangular_grid)
+        self.assertTrue(is_rectangular_grid(rectangular_first_combination))
+
+        rectangular_second_combination = RecursivelyDivisibleGridCombination(non_rectangular_grid, simple_grid)
+        self.assertFalse(is_rectangular_grid(rectangular_second_combination))
+
+    
+    def test_rejects_simple_case(self):
+        grid = create_non_rectangular_grid()
+        self.assertFalse(is_rectangular_grid(grid))
+
+    def test_rejects_combination(self):
+        non_rectangular_grid = create_non_rectangular_grid()
+        another_non_rectangular_grid = create_non_rectangular_grid()
+        combination = RecursivelyDivisibleGridCombination(non_rectangular_grid, another_non_rectangular_grid)
+        self.assertFalse(is_rectangular_grid(combination))
