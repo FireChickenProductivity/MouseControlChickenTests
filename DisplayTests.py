@@ -1,5 +1,5 @@
 from ..source.display.UniversalDisplays import UniversalPositionDisplay
-from ..source.GridFactory import SquareRecursiveDivisionGridFactory, RectangularRecursiveDivisionGridFactory, AlphabetGridFactory
+from ..source.grid_creation.GridFactory import SquareRecursiveDivisionGridFactory, RectangularRecursiveDivisionGridFactory, AlphabetGridFactory
 from ..source.display.Canvas import Canvas, Text
 from ..source.grid.Grid import Rectangle
 import unittest

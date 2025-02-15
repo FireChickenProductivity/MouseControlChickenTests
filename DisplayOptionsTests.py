@@ -3,7 +3,7 @@ from ..source.display.RectangularGridDisplays import *
 from ..source.display.Display import EmptyDisplay
 from ..source.display.UniversalDisplays import UniversalPositionDisplay
 from ..source.display.NarrowDisplays import NarrowDisplay, DoubleNarrowDisplay
-from ..source.GridFactory import SquareRecursiveDivisionGridFactory, RectangularRecursiveDivisionGridFactory, AlphabetGridFactory
+from ..source.grid_creation.GridFactory import SquareRecursiveDivisionGridFactory, RectangularRecursiveDivisionGridFactory, AlphabetGridFactory
 import unittest
 
 def compute_rectangular_display_options():

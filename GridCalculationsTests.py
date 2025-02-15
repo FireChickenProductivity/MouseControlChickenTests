@@ -2,7 +2,7 @@ from ..source.grid.GridCalculations import compute_grid_tree
 from ..source.grid.Grid import Grid, RecursivelyDivisibleGridCombination
 from ..source.grid.ReverseCoordinateDoublingGrid import ReverseCoordinateHorizontalDoublingGrid
 from ..source.grid.RecursiveDivisionGrid import RectangularRecursiveDivisionGrid
-from ..source.GridFactory import SquareRecursiveDivisionGridFactory
+from ..source.grid_creation.GridFactory import SquareRecursiveDivisionGridFactory
 
 import unittest
 

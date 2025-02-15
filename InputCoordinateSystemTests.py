@@ -1,4 +1,4 @@
-from ..source import InputCoordinateSystem
+from ..source.input_coordinates import InputCoordinateSystem
 import unittest
 
 def create_one_through_nine_coordinate_system():
